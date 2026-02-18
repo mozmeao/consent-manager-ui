@@ -115,28 +115,3 @@ yarn format            # Prettier
 | `yarn build:custom` | Build with custom flags (see above) |
 | `yarn build:base` | Core build only (esbuild + copy translations/CSS, no index.html) |
 | `yarn clean` | Clean TypeScript build artifacts |
-
-## Project Structure
-
-```
-src/
-  index.ts          # UI entry point (loaded as dist/ui.js)
-  cm.css            # Consent banner stylesheet
-  init.ts           # Initialization, CSS injection, Transcend API setup
-  settings.ts       # Reads config from airgap/transcend init objects
-  config.ts         # Merges base + settings + extra config
-  consent-manager/  # Preact components for each view state
-  hooks/            # Preact hooks
-  translations/     # i18n message files
-  tests/            # Jest tests + snapshots
-  playground/
-    index.html      # Playground HTML shell
-    index.tsx       # Playground entry point (loaded as dist/playground.js)
-    Main.tsx        # Playground layout and view state launcher
-    Config.tsx      # Config panel (JSON editors, environment, CSS source)
-    airgapStub.ts   # Mock airgap.js API for playground use
-    defaults.ts     # Default config and tracking purposes
-scripts/
-  inject-bundle-id.js  # Generates dist/index.html with BUNDLE_ID and data-* attrs
-build.ts            # esbuild config (builds ui.js + playground.js)
-```
