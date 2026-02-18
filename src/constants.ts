@@ -1,3 +1,4 @@
 export const VERSION = process.env.VERSION as string;
+export const BUNDLE_ID = process.env.BUNDLE_ID as string;
 export const CONSENT_OPTIONS = { confirmed: true, prompted: true };
 export const CSS_RESET = ':host{all:initial}';

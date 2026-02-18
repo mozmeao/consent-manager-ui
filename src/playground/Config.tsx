@@ -4,6 +4,7 @@ import {
   ConsentManagerConfig,
 } from '@transcend-io/airgap.js-types';
 
+import { CssSourceSelector } from './CssSourceSelector';
 import { JsonConfigModal } from './JsonConfig';
 import { defaultConfig, defaultTrackingPurposes } from './defaults';
 import { Environment } from './Environment';
@@ -49,6 +50,12 @@ export function Config(): JSX.Element {
           Environment
         </p>
         <Environment />
+      </div>
+      <div style={{ padding: '0 20px' }}>
+        <p style={{ fontWeight: '600', fontSize: '12px', margin: '0 0 3px 0' }}>
+          Asset source
+        </p>
+        <CssSourceSelector />
       </div>
     </div>
   );

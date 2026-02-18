@@ -1,10 +1,78 @@
-<!doctype html>
+#!/usr/bin/env node
+
+/**
+ * Generates index.html with the BUNDLE_ID from .env injected.
+ *
+ * Usage:
+ *   node scripts/inject-bundle-id.js                          # local mode (all assets from localhost)
+ *   node scripts/inject-bundle-id.js --cm-test                # cm-test mode (all assets from CDN)
+ *   node scripts/inject-bundle-id.js --cm                     # production mode (all assets from CDN)
+ *
+ * Granular overrides (combine with --cm-test or --cm):
+ *   --local-ui        Load ui.js from localhost instead of CDN
+ *   --local-css       Load cm.css from localhost instead of CDN
+ *   --local-messages  Load translations from localhost instead of CDN
+ *
+ * Examples:
+ *   node scripts/inject-bundle-id.js --cm-test --local-css    # CDN UI + local CSS
+ *   node scripts/inject-bundle-id.js --cm --local-ui          # prod CDN config + local UI
+ *   node scripts/inject-bundle-id.js --cm-test --local-ui --local-css --local-messages  # CDN config + all local assets
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const args = process.argv.slice(2);
+const root = path.resolve(__dirname, '..');
+const mode = args.includes('--cm')
+  ? 'cm'
+  : args.includes('--cm-test')
+    ? 'cm-test'
+    : 'local';
+
+// In local mode, all assets are local by default.
+// In cm-test/cm modes, assets come from CDN unless explicitly overridden.
+const useLocalUi = mode === 'local' || args.includes('--local-ui');
+const useLocalCss = mode === 'local' || args.includes('--local-css');
+const useLocalMessages = mode === 'local' || args.includes('--local-messages');
+
+// Load .env file if it exists
+const envPath = path.join(root, '.env');
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const match = line.match(/^\s*([^#=]+?)\s*=\s*(.*)\s*$/);
+    if (match && !process.env[match[1]]) {
+      process.env[match[1]] = match[2];
+    }
+  }
+}
+
+const BUNDLE_ID = process.env.BUNDLE_ID;
+if (!BUNDLE_ID) {
+  console.warn('BUNDLE_ID not set — skipping index.html generation.');
+  process.exit(0);
+}
+if (!/^[a-f0-9-]+$/i.test(BUNDLE_ID)) {
+  console.error(`Invalid BUNDLE_ID: must be a hex/UUID string, got "${BUNDLE_ID}"`);
+  process.exit(1);
+}
+
+const cdnPath = mode === 'cm' ? 'cm' : 'cm-test';
+
+// Build data-* attributes for local overrides
+const localAttrs = [
+  useLocalUi ? '      data-ui="http://localhost:8080/ui.js"' : '',
+  useLocalMessages ? '      data-messages="http://localhost:8080/translations"' : '',
+  useLocalCss ? '      data-css="http://localhost:8080/cm.css"' : '',
+].filter(Boolean);
+const localAttrsStr = localAttrs.length > 0 ? '\n' + localAttrs.join('\n') : '';
+
+const html = `<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <title>Transcend Consent Manager Playground</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" /> -->
     <style type="text/css">
       body {
         display: grid;
@@ -47,20 +115,12 @@
       }
     </style>
     <script
-      data-cfasync="false"
-      data-ui="http://localhost:8080/build/ui.js"
-      data-messages="http://localhost:8080/build/translations"
-      data-css="http://localhost:8080/src/cm.css"
+      data-cfasync="false"${localAttrsStr}
       data-secondary-policy="http://transcend.io/test"
-      src="https://cdn.transcend.io/cm/6efb0409-a0f6-4d3c-90dd-0a03f909dd68/airgap.js"
+      src="https://cdn.transcend.io/${cdnPath}/${BUNDLE_ID}/airgap.js"
       onload="window.airgapScriptLoadEvent=event;"
       data-regime="GDPR"
     ></script>
-    <!-- <script
-      data-cfasync="false"
-      data-languages="en,es-ES,fr-FR"
-      src="https://cdn.transcend.io/cm/6efb0409-a0f6-4d3c-90dd-0a03f909dd68/airgap.js"
-    ></script> -->
   </head>
 
   <body style="height: 100%">
@@ -150,11 +210,11 @@
       };
 
       // Add button for default view state
-      doc.innerHTML += `<button onClick="transcend.showConsentManager()">Default</button><br/><br/>`;
+      doc.innerHTML += \`<button onClick="transcend.showConsentManager()">Default</button><br/><br/>\`;
 
       // callback on change of view state
       var fetchBackendConsent = (userId) => {
-        console.log(`Mocking call to backend to fetch user ID ${userId}`);
+        console.log(\`Mocking call to backend to fetch user ID \${userId}\`);
         return Promise.resolve({
           SaleOfInfo: false,
         });
@@ -169,7 +229,6 @@
         }
         const [policy] = await transcend.getPolicies({
           policyTitles: ['Label Privacy Policy'],
-          // variables: { labelName: 'Marshmalt Records' },
           locale: language || transcend.getActiveLocale(),
         });
         document.getElementById('policy-content').innerHTML = policy.content;
@@ -179,33 +238,13 @@
       transcend.ready(() => {
         // Add buttons for view states
         transcend.viewStates.forEach((viewState) => {
-          doc.innerHTML += `<button onClick="setViewState({ viewState: '${viewState}' })">${viewState}</button><br/><br/>`;
+          doc.innerHTML += \`<button onClick="setViewState({ viewState: '\${viewState}' })">\${viewState}</button><br/><br/>\`;
         });
 
         // re-render the button on consent change
         airgap.addEventListener('consent-change', (...args) => {
           setupDoNotSellButton();
         });
-
-        // this script will blur the screen while a consent banner is showing
-        /*transcend.addEventListener(
-          'view-state-change',
-          ({ detail: { viewState, previousViewState } }) => {
-            let closedViewStates = ['Hidden', 'Closed', 'Collapsed'];
-            let cm = document.getElementById('transcend-consent-manager');
-
-            if (closedViewStates.includes(viewState)) {
-              cm.style.inset = '';
-              cm.style.pointerEvents = '';
-              cm.style.backgroundColor = '';
-            } else {
-              cm.style.inset = '0';
-              cm.style.pointerEvents = 'all';
-              cm.style.backgroundColor = 'rgba(0,0,0,0.5)';
-              cm.dataset.shown = 'shown';
-            }
-          },
-        );*/
 
         // setup the do not sell button
         setupDoNotSellButton();
@@ -217,13 +256,23 @@
           .then(() => {
             setPolicyContent();
           });
-
-        // resolve consent from backend
-        // uncomment to test backend consent mocked integration
-        // fetchBackendConsent(1234).then((consent) =>
-        //   airgap.setConsent(window.airgapScriptLoadEvent, consent),
-        // );
       });
     </script>
   </body>
 </html>
+`;
+
+const dest = path.join(root, 'dist', 'index.html');
+
+fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
+fs.writeFileSync(dest, html, 'utf8');
+
+const localOverrides = [
+  useLocalUi && 'ui',
+  useLocalCss && 'css',
+  useLocalMessages && 'messages',
+].filter(Boolean);
+const overrideInfo = localOverrides.length > 0
+  ? ` | local: ${localOverrides.join(', ')}`
+  : ' | all CDN';
+console.log(`Generated index.html (${mode} mode${overrideInfo}) with BUNDLE_ID=${BUNDLE_ID}`);

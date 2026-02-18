@@ -4,7 +4,7 @@
 **/docs/*
 **/package.json
 **/node_modules/*
-**/build/*
+**/dist/*
 **/dist/*
 **/builds/*
 **/coverage/*

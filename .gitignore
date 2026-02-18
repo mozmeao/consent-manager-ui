@@ -1,5 +1,5 @@
 tsc-build/
-build/
+dist/
 
 # Secrets
 *.env.secret

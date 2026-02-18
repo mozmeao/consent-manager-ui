@@ -2,6 +2,21 @@ import { pnpPlugin } from '@yarnpkg/esbuild-plugin-pnp';
 import * as esbuild from 'esbuild';
 import alias from 'esbuild-plugin-alias';
 
+// Load .env file if it exists
+// eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+const fs = require('fs');
+// eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+const path = require('path');
+const envPath = path.resolve(process.cwd(), '.env');
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const match = line.match(/^\s*([^#=]+?)\s*=\s*(.*)\s*$/);
+    if (match && !process.env[match[1]]) {
+      process.env[match[1]] = match[2];
+    }
+  }
+}
+
 /**
  * Deploy environment
  */
@@ -16,7 +31,7 @@ const { WATCH = 'false' } = process.env;
 
 const logger = console;
 export const build = async (
-  outDir = 'build',
+  outDir = 'dist',
 ): Promise<esbuild.BuildResult[]> => {
   const deployEnv = process.env.DEPLOY_ENV || Env.Prod;
   const cwd = `${process.cwd()}/`;
@@ -94,6 +109,9 @@ export const build = async (
           'process.env.VERSION': JSON.stringify(
             // eslint-disable-next-line global-require, import/no-dynamic-require
             require(`${cwd}/package.json`).version,
+          ),
+          'process.env.BUNDLE_ID': JSON.stringify(
+            process.env.BUNDLE_ID || '',
           ),
         },
       }),

@@ -4,6 +4,7 @@
   "eslint.trace.server": "messages",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsserver.useSeparateSyntaxServer": true,
   "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
   "editor.formatOnSave": true,
   "typescript.updateImportsOnFileMove.enabled": "always",

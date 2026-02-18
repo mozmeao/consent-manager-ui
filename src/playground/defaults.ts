@@ -5,7 +5,7 @@ import type {
 import { DEFAULT_VIEW_STATE_BY_PRIVACY_REGIME_COPIED } from '../config';
 
 export const defaultConfig: Partial<ConsentManagerConfig> = {
-  css: './build/cm.css',
+  css: '../../dist/cm.css',
   messages: '',
   breakpoints: {
     tablet: '640px',

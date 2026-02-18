@@ -4,7 +4,7 @@
 
 /** Variables to insert into the remainder of the stylesheet */
 * {
-  --primary-color: #3333ff;
+  --primary-color: #010101;
   --text-color: #010101;
 }
 
@@ -13,21 +13,65 @@
  *******************/
 
 /** Buttons displayed throughout the consent UI */
+/** Buttons displayed throughout the consent UI */
 .button {
   min-height: 42px;
-  border-radius: 500px;
+  border-radius: 4px;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.7);
-  opacity: 0.9;
-  border: 1px solid var(--primary-color);
+  background-color: var(--primary-color);
+  border: 2px solid var(--primary-color);
   box-sizing: border-box;
   cursor: pointer;
-  filter: brightness(100%);
-  flex-shrink: 0;
   font-family: inherit;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.5;
+  padding: 6px 24px;
+  margin-bottom: 16px;
+  transition: background-color 100ms, box-shadow 100ms, color 100ms;
+}
+
+/** On button hover */
+.button:hover {
+  background-color: #ffffff;
+}
+
+/** Base styles applied to button text */
+.button-base-text {
+  color: #ffffff;
+  display: block;
+  font-style: normal;
   text-align: center;
-  padding: 6px;
-  transition: filter 150ms, background-color 150ms;
+  transition: color 150ms;
+}
+
+/** Inner text on button hover */
+.button:hover span {
+  color: var(--primary-color);
+}
+
+/** Container that is wrapped around the modal */
+.modal-container {
+  position: fixed;
+  bottom: 10px;
+  left: 5px;
+  right: 5px;
+  margin: 0 auto;
+  width: calc(100% - 10px);
+  box-sizing: border-box;
+  border-radius: 16px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  padding: 21px;
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir,
+  helvetica neue, helvetica, 'sans-serif';
+  box-shadow: 0 5px 16px 2px rgba(29, 17, 51, 0.25);
+  backdrop-filter: blur(20px) saturate(5);
+  -webkit-backdrop-filter: blur(20px) saturate(5);
+  animation: fadeIn 150ms;
+  max-height: 90%;
+  transition: width 150ms, height 150ms;
 }
 
 /** Not the last button in a list of buttons */
@@ -35,29 +79,55 @@
   margin-bottom: 8px;
 }
 
-/** On button hover */
-.button:hover {
-  background-color: var(--primary-color);
-}
-
-/** Inner text on button hover */
-.button:hover span {
-  color: #ffffff;
-}
-
-/** Base styles applied to button text */
-.button-base-text {
-  color: var(--primary-color);
-  display: block;
-  font-style: normal;
-  text-align: center;
-  transition: color 150ms;
-}
-
 /** Styles applied to "primary" button text */
 .button-primary-text {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
+}
+
+/** Modal title text styles */
+.text-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0 0 18px 0;
+  text-align: left;
+}
+
+/** Paragraph text styles */
+.paragraph {
+  color: var(--text-color);
+  font-size: 16px;
+  margin: 0 0 18px 0;
+}
+
+/** Styles applied to the main contents of the consent modal (does not include footer) */
+.column-content {
+  min-height: 79px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  animation: fadeIn 150ms;
+}
+
+/** Button row styles for AcceptOrRejectAll view state */
+.accept-or-reject-all-button-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/** Styles applied to bottom menu */
+.bottom-menu-container {
+  width: calc(100% - 60px);
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 0 auto;
 }
 
 /** Styles applied to "secondary" button text */
@@ -76,57 +146,18 @@ a:focus {
   outline: 2px solid rgba(51, 157, 255, 0.7);
 }
 
-/***********************************
- * Accessibility - non-visual label
- ***********************************/
-
- /** Screen reader styles */
- .screen-reader {
-	border: 0;
-	clip: rect(0 0 0 0);
-	height: 1px;
-	margin: -1px;
-	overflow: hidden;
-	padding: 0;
-	position: absolute;
-	white-space: nowrap;
-	width: 1px;
+/** Screen reader styles */
+.screen-reader {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
-
-/*******************
- * Text Styles
- *******************/
-
-/** Modal title text styles */
-.text-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-color);
-  margin: 0 0 18px 0;
-  text-align: center;
-}
-
-/** Paragraph text styles */
-.paragraph {
-  color: var(--text-color);
-  font-size: 14px;
-  margin: 0 0 18px 0;
-}
-
-/** Styles applied to the main contents of the consent modal (does not include footer) */
-.column-content {
-  min-height: 79px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  animation: fadeIn 150ms;
-}
-
-/*******************
- * CompleteOptions
- *******************/
 
 /** Styles applied to `CompleteOptions` view state body  */
 .complete-options-form {
@@ -269,29 +300,10 @@ a:focus {
   border-color: #d8d8d8;
 }
 
-/*******************
- * AcceptOrRejectAll
- *******************/
-
-/** Button row styles for AcceptOrRejectAll view state */
-.accept-or-reject-all-button-row {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-/*******************
- * DoNotSellExplainer
- *******************/
-
 /** Do not sell switch interface */
 .margin-tops > * {
   margin-top: 2em;
 }
-
-/*******************
- * LanguageOptions
- *******************/
 
 /** Styles applied around the language container */
 .language-options-container {
@@ -315,12 +327,11 @@ a:focus {
 .language-button {
   background: unset;
   border: unset;
-  width: unset;
   padding: unset;
   margin: unset;
-  width: 17px;
-  height: 17px;
-  overflow: hidden;
+  width: 20px;
+  height: 20px;
+  overflow: visible;
   position: absolute;
   bottom: 0;
   right: 0;
@@ -349,27 +360,12 @@ a:focus {
   fill: var(--primary-color);
 }
 
-/*******************
- * BottomMenu
- *******************/
-
 /** Outer styles wrapped around entire bottom menu */
 .footer-container {
   position: absolute;
   bottom: 21px;
   width: calc(100% - 21px * 2);
   height: 17px;
-}
-
-/** Styles applied to bottom menu */
-.bottom-menu-container {
-  width: calc(100% - 60px);
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  margin: 0 auto;
 }
 
 /** Styles applied to each item of bottom menu */
@@ -384,7 +380,6 @@ a:focus {
   width: unset;
   padding: unset;
   margin: unset;
-
   margin: 0 auto;
   display: block;
   min-width: fit-content;
@@ -410,10 +405,6 @@ a:focus {
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
-
-/*******************
- * Collapsed
- *******************/
 
 /** Styles for the collapsed square logo  */
 .collapsed-square-logo-svg {
@@ -448,11 +439,11 @@ a:focus {
   align-items: center;
   justify-content: flex-start;
   font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir,
-    helvetica neue, helvetica, 'sans-serif';
+  helvetica neue, helvetica, 'sans-serif';
   box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px) saturate(5);
   transition: width 150ms ease-in 500ms, background-color 150ms ease-in-out,
-    box-shadow 150ms ease-in-out;
+  box-shadow 150ms ease-in-out;
 }
 
 /** Styles applied to consent icon when actively selected */
@@ -488,40 +479,12 @@ a:focus {
   transition-delay: 0ms;
 }
 
-/*******************
- * Modal
- *******************/
-
-/** Container that is wrapped around the modal */
-.modal-container {
-  position: fixed;
-  bottom: 10px;
-  left: 5px;
-  right: 5px;
-  margin: 0 auto;
-  width: calc(100% - 10px);
-  box-sizing: border-box;
-  border-radius: 18px;
-  border: 0.5px solid #d8d8d8;
-  background-color: rgba(255, 255, 255, 0.9);
-  overflow: hidden;
-  padding: 21px;
-  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir,
-    helvetica neue, helvetica, 'sans-serif';
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(20px) saturate(5);
-  -webkit-backdrop-filter: blur(20px) saturate(5);
-  animation: fadeIn 150ms;
-  max-height: 90%;
-  transition: width 150ms, height 150ms;
-}
-
 /** Inner contents wrapper for modal content */
 .modal-container-inner {
   min-height: 79px;
   height: calc(100% - 38px);
   width: 100%;
-  padding-bottom: 38px;
+  padding-bottom: 48px;
 }
 
 /** Styles that wrap the text container of the modal content. Excludes footer */
@@ -529,24 +492,15 @@ a:focus {
   overflow-y: auto;
 }
 
-/*******************
- * KeyFrames
- *******************/
-
 /** Animation for fading in, used throughout the stylesheet */
 @keyframes fadeIn {
   0% {
-    opacity: 0;
+  opacity: 0;
   }
   100% {
-    opacity: 1;
+  opacity: 1;
   }
 }
-
-
-/*******************
- * DoNotSellExplainer
- *******************/
 
 /** Styles for button of X marker in top right corner */
 .do-not-sell-explainer-close {
@@ -577,10 +531,6 @@ a:focus {
   margin-top: 2em;
 }
 
-/*******************
- * AcceptAllRejectAllToggle
- *******************/
-
 /** Styles for button of X marker in top right corner */
 .accept-all-reject-all-toggle-close {
   --squareDimension: 25px;
@@ -605,10 +555,6 @@ a:focus {
   background-color: #e2e2e2;
 }
 
-/*******************
- * PrivacyPolicyNoticeWithCloseButton
- *******************/
-
 /** Styles for button of X marker in top right corner */
 .privacy-policy-notice-with-close-button-close {
   --squareDimension: 25px;
@@ -632,11 +578,6 @@ a:focus {
 .privacy-policy-notice-with-close-button-close:hover, .privacy-policy-notice-with-close-button-close:focus {
   background-color: #e2e2e2;
 }
-
-
-/***********************
- * CompleteOptionsToggle
- ***********************/
 
 /** Styles for button of X marker in top right corner */
 .complete-options-toggle-close {
@@ -672,10 +613,6 @@ a:focus {
   padding-bottom: 2em;
 }
 
-/*******************
- * GPC Indicator
- *******************/
-
 /** GPC outer styles */
 .gpc-setting {
   display: flex;
@@ -693,10 +630,6 @@ a:focus {
   font-size: 14px;
   color: var(--text-color);
 }
-
-/*******************
- * Switch
- *******************/
 
 /** Styles for the switch */
 .switch {
@@ -717,8 +650,6 @@ a:focus {
   white-space: nowrap;
   padding: 0 5px;
 }
-
-/** Removes checkbox for the switch since checkbox is basis for switch */
 
 /** Switch label */
 .switch.switch-background {
@@ -776,18 +707,15 @@ a:focus {
   width: calc(var(--switchButtonDiameter) * 1.2);
 }
 
-/*******************
- * TranscendLogo
- *******************/
-
 /** Container around the Transcend logo in the bottom left hand side of the modal */
 .transcend-logo-container {
-  width: 17px;
+  display: none;
+  /* width: 17px;
   height: 17px;
   overflow: hidden;
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 0; */
 }
 
 /** Styles applied to the Transcend svg logo in the bottom left hand side of the modal */
@@ -808,69 +736,65 @@ a:focus {
   transition: fill 150ms, fill-opacity 150ms;
 }
 
-/*******************
- * Media Styles
- *******************/
-
-/** At least table */
+/** At least tablet */
 @media (min-width: 640px) {
-  /** Button Styles */
   .button {
-    width: 135px;
-  }
-  .button:not(:last-of-type) {
+    width: auto;
+    min-width: 260px;
     margin-bottom: 0;
   }
-
-  /** Text Styles */
-  .text-title-left {
-    margin: 0 18px 0 0;
-    text-align: left;
-  }
-  .text-title-center {
-    margin: 0 0 18px 0;
-    text-align: center;
+  .modal-container {
+    bottom: 22px;
+    max-width: 1152px;
+    min-height: 160px;
+    padding: 24px 48px 24px 48px;
   }
   .paragraph {
-    margin: 18px 18px 0 0;
+    margin: 0 0 18px 0;
   }
   .column-content {
-    flex-direction: row;
+    flex-direction: column;
   }
-
-  /** AcceptOrRejectAll */
   .accept-or-reject-all-button-row {
     flex-direction: row;
+    align-items: center;
+    gap: 16px;
   }
-  .accept-or-reject-all-button-row button:not(:first-of-type) {
-    margin-left: 10px;
+  .accept-or-reject-all-button-row .button:not(:last-of-type) {
+    margin-bottom: 0;
+  }
+  .bottom-menu-container {
+    width: auto;
+    justify-content: flex-start;
+    gap: 24px;
+    margin: 0 30px 0 0;
+  }
+  .text-title-left {
+    margin: 0 0 18px 0;
+    text-align: left;
   }
 
-  /** Bottom Menu */
-  .bottom-menu-container {
-    width: calc(100% - 150px);
-    justify-content: space-evenly;
+  .accept-or-reject-all-button-row .button-secondary-text {
+  display:none;
+  }
+
+  .toggles-container {
+    flex-direction: row;
   }
   .bottom-menu-item {
     font-size: 12px;
   }
-
-  /** CompleteOptions */
-  .toggles-container {
-    flex-direction: row;
+  .footer-container {
+    left: 48px;
+    right: 48px;
+    width: auto;
   }
-
-  /** Modal */
-  .modal-container {
-    bottom: 5px;
-    max-width: 630px;
-    min-height: 160px;
-    bottom: 22px;
-  }
-
-  /** TranscendLogo */
   .transcend-logo-container {
     width: 64px;
+  }
+  .text-title-center {
+    margin: 0 0 18px 0;
+    text-align: center;
   }
   .transcend-logo-svg:hover .transcend-wordmark,
   .transcend-logo-container:focus .transcend-wordmark {
@@ -879,4 +803,6 @@ a:focus {
   .transcend-logo-svg:hover path, .transcend-logo-container:focus path {
     fill: var(--primary-color);
   }
+  
 }
+

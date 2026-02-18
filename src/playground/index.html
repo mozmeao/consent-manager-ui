@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" /> -->
-    <link rel="stylesheet" href="../../build/playground.css" />
+    <link rel="stylesheet" href="../../dist/playground.css" />
 
     <!-- Stub transcendInit -->
     <script>
@@ -23,6 +23,7 @@
         }
         const stub = {
           consentManagerConfig: loadOptions,
+          loadOptions: loadOptions,
           readyQueue: [],
           ready(callback) {
             this.readyQueue.push(callback);
@@ -54,10 +55,10 @@
     </main>
 
     <!-- Start Consent Manager UI -->
-    <script src="../../build/ui.js"></script>
+    <script src="../../dist/ui.js"></script>
 
     <!-- Set up playground, stub airgap API -->
-    <script src="../../build/playground.js"></script>
+    <script src="../../dist/playground.js"></script>
 
     <!-- Flush readyQueue (make airgap.js ready) -->
     <script>
